@@ -4,3 +4,4 @@ _vimrc_local.vim
 coffeelint.json
 node_modules
 .idea/
+src/sass/_*-map.scss
