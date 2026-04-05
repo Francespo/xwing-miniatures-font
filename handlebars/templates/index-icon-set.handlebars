@@ -4,8 +4,14 @@
     <th>Codepoint</th>
 </tr>
 {{#each map}}
-<tr>
-    <td>xwing-miniatures-{{../name}}-{{@key}}</td>
+<tr class="icon-row">
+    <td>
+        xwing-miniatures-{{../name}}-{{@key}}
+        <span class="icon-tooltip">
+            <i class="xwing-miniatures-{{../name}} xwing-miniatures-{{../name}}-{{@key}} tooltip-icon-preview"></i>
+            <span class="tooltip-icon-name">xwing-miniatures-{{../name}}-{{@key}}</span>
+        </span>
+    </td>
     <td><i class="xwing-miniatures-{{../name}} xwing-miniatures-{{../name}}-{{@key}}"></i></td>
     <td style="text-align: center; padding: 10px">{{this}}</td>
     <td style="text-align: center"><code>{{{escape this}}}</code></td>

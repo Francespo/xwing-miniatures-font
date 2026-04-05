@@ -34,6 +34,7 @@ module.exports = (grunt) ->
                 'src/json/icons-map.json'
             ]
             partials: 'handlebars/templates/index-icon-set.handlebars'
+            helpers: 'handlebars/helpers/*.js'
         
     sass:
       compile:
