@@ -1,0 +1,62 @@
+name: Collect Tournament Data
+
+on:
+  schedule:
+    # Run every day at 02:00 UTC
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Look-back window in days (1–365)"
+        required: false
+        default: "7"
+        type: string
+      platforms:
+        description: "Comma-separated platforms: longshanks,challonge,bcp,listfortress"
+        required: false
+        default: "longshanks,challonge,bcp"
+        type: string
+      output:
+        description: "Output file path"
+        required: false
+        default: "data/tournaments.json"
+        type: string
+
+jobs:
+  collect:
+    name: Collect tournament data
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run collection script
+        env:
+          CHALLONGE_API_KEY: ${{ secrets.CHALLONGE_API_KEY }}
+          BCP_API_KEY: ${{ secrets.BCP_API_KEY }}
+        run: |
+          python scripts/collect_tournaments.py \
+            --days "${{ github.event.inputs.days || '7' }}" \
+            --platforms "${{ github.event.inputs.platforms || 'longshanks,challonge,bcp' }}" \
+            --output "${{ github.event.inputs.output || 'data/tournaments.json' }}"
+
+      - name: Commit updated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/tournaments.json || true
+          # Only commit when the file actually changed
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update tournament data [skip ci]"
+            git push
+          else
+            echo "No new tournament data – nothing to commit."
+          fi
